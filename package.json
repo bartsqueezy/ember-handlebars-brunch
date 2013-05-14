@@ -12,6 +12,10 @@
     {
       "name": "Ilia Choly",
       "email": "ilia.choly@gmail.com"
+    },
+    {
+      "name": "Codey Whitt",
+      "email": "codey.whitt@gmail.com"
     }
   ],
   "homepage": "https://github.com/bartsqueezy/ember-handlebars-brunch",
