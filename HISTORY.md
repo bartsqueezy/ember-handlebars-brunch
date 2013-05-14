@@ -1,0 +1,2 @@
+## History of Project
+This project originally started off as a proof of concept by [Sai Wong](https://github.com/saiwong).  It was then forked by [Ilia Choly](https://github.com/icholy) and myself, to which we've added performance improvements, updates, and support.  Sai and Ilia have since then jumped off the Ember bandwagon to pursue other technologies.  Thus, I have picked up support of this project and plan on maintaining it for the foreseeable future.  If you see Sai or Ilia trolling around in the interwebs, be sure to give them a high five and say thanks!

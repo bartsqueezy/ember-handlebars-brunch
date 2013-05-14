@@ -1,0 +1,37 @@
+{
+  "name": "ember-handlebars-brunch",
+  "version": "1.0.3",
+  "description": "Adds pre-compiling support for Ember Handlebars templates to Brunch",
+  "author": {
+    "name": "Steve Bartnesky"
+  },
+  "contributors": [
+    {
+      "name": "Sai Wong"
+    },
+    {
+      "name": "Ilia Choly",
+      "email": "ilia.choly@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/bartsqueezy/ember-handlebars-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bartsqueezy/ember-handlebars-brunch.git"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "postinstall": "node setup.js postinstall",
+    "test": "node setup.js test"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "coffee-script": "1.6.2"
+  },
+  "devDependencies": {
+    "mocha": "1.9.0",
+    "expect.js": "0.2.0"
+  }
+}
