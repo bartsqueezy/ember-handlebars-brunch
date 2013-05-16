@@ -6,8 +6,11 @@ module.exports = (->
   vm      = require 'vm'
   sysPath = require 'path'
 
-  compilerPath     = sysPath.join __dirname, '..', 'vendor', 'ember-template-compiler.js'
-  compilerjs    = fs.readFileSync compilerPath, 'utf8'
+  compilerPath = sysPath.join __dirname, '..', 'vendor', 'ember-template-compiler.js'
+  handlebarsPath = sysPath.join __dirname, '..', 'vendor', 'handlebars.js'
+
+  compilerjs   = fs.readFileSync compilerPath, 'utf8'
+  handlebarsjs   = fs.readFileSync handlebarsPath, 'utf8'
 
   # dummy DOM element
   element =
@@ -40,6 +43,7 @@ module.exports = (->
   context = vm.createContext sandbox
 
   # load ember-template-compiler in the vm to compile templates
+  vm.runInContext handlebarsjs, context, 'handlebarsjs'
   vm.runInContext compilerjs, context, 'compiler.js'
 
   return (templateData)->
