@@ -13,12 +13,17 @@ Within `config.coffee`, set `precompile: true` within the templates compiler if 
 ```coffeescript
 templates:
     precompile: true  # default is false
-    root: 'templates/'
+    root: 'templates/'  # default is null
     defaultExtension: 'hbs'
     joinTo: 'javascripts/app.js' : /^app/
 ```
 
-Place all of your handlebars templates within the `app/templates/` directory.  Make sure the extensions of each template match the `defaultExtension` property shown above.  Your `views` and `templates` directories should look similar to this:
+A few reminders about the configuration object mentioned above:
+
+1. Make sure the extension of each template file matches the `defaultExtension` property
+2. The value you provide for `root` should represent a directory located under your `app` directory.  If you do not provide a value for this property, ember-handlebars-brunch will, by default, set the template name to the path of your file, starting from `app`.  For instance, without defining the `root` property, a template located at `app/templates/index.hbs` will be registered with Ember like `Ember.TEMPLATES['app/templates/index']`.
+
+If using the exact example configuration above, your `views` and `templates` directories should look similar to this:
 
 ```
 └─┬ app
