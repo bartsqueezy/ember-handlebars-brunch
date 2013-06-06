@@ -1,7 +1,7 @@
 (function() {
 var Ember = { assert: function() {} };
-// Version: v1.0.0-rc.3-240-g0f8322a
-// Last commit: 0f8322a (2013-05-16 11:29:11 -0500)
+// Version: v1.0.0-rc.5-30-gc5ea0e2
+// Last commit: c5ea0e2 (2013-06-05 19:59:58 -0700)
 
 
 (function() {
@@ -55,10 +55,63 @@ function makeBindings(options) {
   }
 }
 
+/**
+  Register a bound helper or custom view helper.
+
+  ## Simple bound helper example
+
+  ```javascript
+  Ember.Handlebars.helper('capitalize', function(value) {
+    return value.toUpperCase();
+  });
+  ```
+
+  The above bound helper can be used inside of templates as follows:
+
+  ```handlebars
+  {{capitalize name}}
+  ```
+
+  In this case, when the `name` property of the template's context changes,
+  the rendered value of the helper will update to reflect this change.
+
+  For more examples of bound helpers, see documentation for
+  `Ember.Handlebars.registerBoundHelper`.
+
+  ## Custom view helper example
+
+  Assuming a view subclass named `App.CalenderView` were defined, a helper
+  for rendering instances of this view could be registered as follows:
+
+  ```javascript
+  Ember.Handlebars.helper('calendar', App.CalendarView):
+  ```
+
+  The above bound helper can be used inside of templates as follows:
+
+  ```handlebars
+  {{calendar}}
+  ```
+
+  Which is functionally equivalent to:
+
+  ```handlebars
+  {{view App.CalendarView}}
+  ```
+
+  Options in the helper will be passed to the view in exactly the same
+  manner as with the `view` helper.
+
+  @method helper
+  @for Ember.Handlebars
+  @param {String} name
+  @param {Function|Ember.View} function or view class constructor
+  @param {String} dependentKeys*
+*/
 Ember.Handlebars.helper = function(name, value) {
   if (Ember.View.detect(value)) {
     Ember.Handlebars.registerHelper(name, function(options) {
-      Ember.assert("You can only pass attributes as parameters to a application-defined helper", arguments.length < 3);
+      Ember.assert("You can only pass attributes as parameters (not values) to a application-defined helper", arguments.length < 2);
       makeBindings(options);
       return Ember.Handlebars.helpers.view.call(this, value, options);
     });
