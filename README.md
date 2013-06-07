@@ -6,9 +6,9 @@ It is included by default in the [Ember Brunch](https://github.com/icholy/ember-
 
 ## Installation and Usage
 
-Add `"ember-handlebars-brunch": "git+ssh://git@github.com:bartsqueezy/ember-handlebars-brunch.git"` to `package.json` of your Brunch application.
+Add `"ember-handlebars-brunch": "1.0.4"` to `package.json` within your Brunch application codebase.
 
-Within `config.coffee`, set `precompile: true` within the templates compiler if you want to enable pre-compiling.
+Within the templates compiler config object of the `config.coffee` file, set `precompile: true` to enable pre-compiling.
 
 ```coffeescript
 templates:
@@ -21,7 +21,7 @@ templates:
 A few reminders about the configuration object mentioned above:
 
 1. Make sure the extension of each template file matches the `defaultExtension` property
-2. The value you provide for `root` should represent a directory located under your `app` directory.  If you do not provide a value for this property, ember-handlebars-brunch will, by default, set the template name to the path of your file, starting from `app`.  For instance, without defining the `root` property, a template located at `app/templates/index.hbs` will be registered with Ember like `Ember.TEMPLATES['app/templates/index']`.
+2. The value you provide for `root` should represent a directory located under your `app` directory.  If you do not provide a value for this property, ember-handlebars-brunch will, by default, set the template name to the path of your file, starting from `app`.  For instance, without defining the `root` property, a template located at `app/templates/index.hbs` will be registered with Ember as `Ember.TEMPLATES['app/templates/index']`.
 
 If using the exact example configuration above, your `views` and `templates` directories should look similar to this:
 
@@ -58,13 +58,13 @@ App.IndexLoginView = Ember.View.extend({
 });
 ```
 
-The precompiled templates are injected into the `Ember.TEMPLATES` namespace.  You can access them like so:
+The precompiled templates are injected into the `Ember.TEMPLATES` namespace.  You can access them within your JS code like so:
 
 ```javascript
 var anotherTemplate = Ember.TEMPLATES['index/login'];
 ```
 
-If you wish to `require` the template manually instead of using them directly within a view class, you have to use the full path to the file, starting from the templates directory;
+If you wish to `require` the template instead of declaring them directly within a view class or within your code as mentioned above, you have to use the full path to the file, starting from the templates directory;
 
 ```javascript
 require('templates/index/login');
