@@ -1,5 +1,4 @@
 sysPath     = require 'path'
-fs          = require 'fs'
 compileHBS  = require './ember-handlebars-compiler'
 
 module.exports = class EmberHandlebarsCompiler
@@ -8,15 +7,15 @@ module.exports = class EmberHandlebarsCompiler
   extension: 'hbs'
   precompile: off
   root: null
-  modulesPrefix: ''
+  modulesPrefix: 'module.exports = '
 
   constructor: (@config) ->
     if @config.files.templates.precompile is on
       @precompile = on
     if @config.files.templates.root?
       @root = sysPath.join 'app', @config.files.templates.root, sysPath.sep
-    if @config.modules.wrapper is on
-      @modulesPrefix = 'module.exports = '
+    if @config.modules.wrapper is off
+      @modulesPrefix = ''
     null
 
   compile: (data, path, callback) ->
