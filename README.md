@@ -69,3 +69,5 @@ If you wish to `require` the template instead of declaring them directly within 
 ```javascript
 require('templates/index/login');
 ```
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/bartsqueezy/ember-handlebars-brunch/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
