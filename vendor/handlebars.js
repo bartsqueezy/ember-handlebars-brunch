@@ -20,22 +20,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+@license
 */
 
 // lib/handlebars/browser-prefix.js
-var Handlebars = {};
-
-(function(Handlebars, undefined) {
+(function(undefined) {
+  var Handlebars = {};
 ;
 // lib/handlebars/base.js
 
-Handlebars.VERSION = "1.0.0-rc.4";
-Handlebars.COMPILER_REVISION = 3;
+Handlebars.VERSION = "1.0.0";
+Handlebars.COMPILER_REVISION = 4;
 
 Handlebars.REVISION_CHANGES = {
   1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
   2: '== 1.0.0-rc.3',
-  3: '>= 1.0.0-rc.4'
+  3: '== 1.0.0-rc.4',
+  4: '>= 1.0.0'
 };
 
 Handlebars.helpers  = {};
@@ -67,7 +68,7 @@ Handlebars.registerHelper('helperMissing', function(arg) {
   if(arguments.length === 2) {
     return undefined;
   } else {
-    throw new Error("Could not find property '" + arg + "'");
+    throw new Error("Missing helper: '" + arg + "'");
   }
 });
 
@@ -124,6 +125,9 @@ Handlebars.registerHelper('each', function(context, options) {
   var fn = options.fn, inverse = options.inverse;
   var i = 0, ret = "", data;
 
+  var type = toString.call(context);
+  if(type === functionType) { context = context.call(this); }
+
   if (options.data) {
     data = Handlebars.createFrame(options.data);
   }
@@ -152,22 +156,25 @@ Handlebars.registerHelper('each', function(context, options) {
   return ret;
 });
 
-Handlebars.registerHelper('if', function(context, options) {
-  var type = toString.call(context);
-  if(type === functionType) { context = context.call(this); }
+Handlebars.registerHelper('if', function(conditional, options) {
+  var type = toString.call(conditional);
+  if(type === functionType) { conditional = conditional.call(this); }
 
-  if(!context || Handlebars.Utils.isEmpty(context)) {
+  if(Handlebars.Utils.isEmpty(conditional)) {
     return options.inverse(this);
   } else {
     return options.fn(this);
   }
 });
 
-Handlebars.registerHelper('unless', function(context, options) {
-  return Handlebars.helpers['if'].call(this, context, {fn: options.inverse, inverse: options.fn});
+Handlebars.registerHelper('unless', function(conditional, options) {
+  return Handlebars.helpers['if'].call(this, conditional, {fn: options.inverse, inverse: options.fn});
 });
 
 Handlebars.registerHelper('with', function(context, options) {
+  var type = toString.call(context);
+  if(type === functionType) { context = context.call(this); }
+
   if (!Handlebars.Utils.isEmpty(context)) return options.fn(context);
 });
 
@@ -181,111 +188,104 @@ Handlebars.registerHelper('log', function(context, options) {
 var handlebars = (function(){
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"root":3,"program":4,"EOF":5,"simpleInverse":6,"statements":7,"statement":8,"openInverse":9,"closeBlock":10,"openBlock":11,"mustache":12,"partial":13,"CONTENT":14,"COMMENT":15,"OPEN_BLOCK":16,"inMustache":17,"CLOSE":18,"OPEN_INVERSE":19,"OPEN_ENDBLOCK":20,"path":21,"OPEN":22,"OPEN_UNESCAPED":23,"OPEN_PARTIAL":24,"partialName":25,"params":26,"hash":27,"DATA":28,"param":29,"STRING":30,"INTEGER":31,"BOOLEAN":32,"hashSegments":33,"hashSegment":34,"ID":35,"EQUALS":36,"PARTIAL_NAME":37,"pathSegments":38,"SEP":39,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",14:"CONTENT",15:"COMMENT",16:"OPEN_BLOCK",18:"CLOSE",19:"OPEN_INVERSE",20:"OPEN_ENDBLOCK",22:"OPEN",23:"OPEN_UNESCAPED",24:"OPEN_PARTIAL",28:"DATA",30:"STRING",31:"INTEGER",32:"BOOLEAN",35:"ID",36:"EQUALS",37:"PARTIAL_NAME",39:"SEP"},
-productions_: [0,[3,2],[4,2],[4,3],[4,2],[4,1],[4,1],[4,0],[7,1],[7,2],[8,3],[8,3],[8,1],[8,1],[8,1],[8,1],[11,3],[9,3],[10,3],[12,3],[12,3],[13,3],[13,4],[6,2],[17,3],[17,2],[17,2],[17,1],[17,1],[26,2],[26,1],[29,1],[29,1],[29,1],[29,1],[29,1],[27,1],[33,2],[33,1],[34,3],[34,3],[34,3],[34,3],[34,3],[25,1],[21,1],[38,3],[38,1]],
+symbols_: {"error":2,"root":3,"statements":4,"EOF":5,"program":6,"simpleInverse":7,"statement":8,"openInverse":9,"closeBlock":10,"openBlock":11,"mustache":12,"partial":13,"CONTENT":14,"COMMENT":15,"OPEN_BLOCK":16,"inMustache":17,"CLOSE":18,"OPEN_INVERSE":19,"OPEN_ENDBLOCK":20,"path":21,"OPEN":22,"OPEN_UNESCAPED":23,"CLOSE_UNESCAPED":24,"OPEN_PARTIAL":25,"partialName":26,"partial_option0":27,"inMustache_repetition0":28,"inMustache_option0":29,"dataName":30,"param":31,"STRING":32,"INTEGER":33,"BOOLEAN":34,"hash":35,"hash_repetition_plus0":36,"hashSegment":37,"ID":38,"EQUALS":39,"DATA":40,"pathSegments":41,"SEP":42,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",14:"CONTENT",15:"COMMENT",16:"OPEN_BLOCK",18:"CLOSE",19:"OPEN_INVERSE",20:"OPEN_ENDBLOCK",22:"OPEN",23:"OPEN_UNESCAPED",24:"CLOSE_UNESCAPED",25:"OPEN_PARTIAL",32:"STRING",33:"INTEGER",34:"BOOLEAN",38:"ID",39:"EQUALS",40:"DATA",42:"SEP"},
+productions_: [0,[3,2],[6,2],[6,3],[6,2],[6,1],[6,1],[6,0],[4,1],[4,2],[8,3],[8,3],[8,1],[8,1],[8,1],[8,1],[11,3],[9,3],[10,3],[12,3],[12,3],[13,4],[7,2],[17,3],[17,1],[31,1],[31,1],[31,1],[31,1],[31,1],[35,1],[37,3],[26,1],[26,1],[26,1],[30,2],[21,1],[41,3],[41,1],[27,0],[27,1],[28,0],[28,2],[29,0],[29,1],[36,1],[36,2]],
 performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return $$[$0-1]; 
+case 1: return new yy.ProgramNode($$[$0-1]); 
 break;
-case 2: this.$ = new yy.ProgramNode([], $$[$0]); 
+case 2:this.$ = new yy.ProgramNode([], $$[$0]);
 break;
-case 3: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]); 
+case 3:this.$ = new yy.ProgramNode($$[$0-2], $$[$0]);
 break;
-case 4: this.$ = new yy.ProgramNode($$[$0-1], []); 
+case 4:this.$ = new yy.ProgramNode($$[$0-1], []);
 break;
-case 5: this.$ = new yy.ProgramNode($$[$0]); 
+case 5:this.$ = new yy.ProgramNode($$[$0]);
 break;
-case 6: this.$ = new yy.ProgramNode([], []); 
+case 6:this.$ = new yy.ProgramNode([]);
 break;
-case 7: this.$ = new yy.ProgramNode([]); 
+case 7:this.$ = new yy.ProgramNode([]);
 break;
-case 8: this.$ = [$$[$0]]; 
+case 8:this.$ = [$$[$0]];
 break;
 case 9: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 10: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1].inverse, $$[$0-1], $$[$0]); 
+case 10:this.$ = new yy.BlockNode($$[$0-2], $$[$0-1].inverse, $$[$0-1], $$[$0]);
 break;
-case 11: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0-1].inverse, $$[$0]); 
+case 11:this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0-1].inverse, $$[$0]);
 break;
-case 12: this.$ = $$[$0]; 
+case 12:this.$ = $$[$0];
 break;
-case 13: this.$ = $$[$0]; 
+case 13:this.$ = $$[$0];
 break;
-case 14: this.$ = new yy.ContentNode($$[$0]); 
+case 14:this.$ = new yy.ContentNode($$[$0]);
 break;
-case 15: this.$ = new yy.CommentNode($$[$0]); 
+case 15:this.$ = new yy.CommentNode($$[$0]);
 break;
-case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
+case 16:this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]);
 break;
-case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
+case 17:this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]);
 break;
-case 18: this.$ = $$[$0-1]; 
+case 18:this.$ = $$[$0-1];
 break;
-case 19: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
+case 19:
+    // Parsing out the '&' escape token at this level saves ~500 bytes after min due to the removal of one parser node.
+    this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], $$[$0-2][2] === '&');
+  
 break;
-case 20: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true); 
+case 20:this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true);
 break;
-case 21: this.$ = new yy.PartialNode($$[$0-1]); 
+case 21:this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]);
 break;
-case 22: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]); 
+case 22: 
 break;
-case 23: 
+case 23:this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]];
 break;
-case 24: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]]; 
+case 24:this.$ = [[$$[$0]], null];
 break;
-case 25: this.$ = [[$$[$0-1]].concat($$[$0]), null]; 
+case 25:this.$ = $$[$0];
 break;
-case 26: this.$ = [[$$[$0-1]], $$[$0]]; 
+case 26:this.$ = new yy.StringNode($$[$0]);
 break;
-case 27: this.$ = [[$$[$0]], null]; 
+case 27:this.$ = new yy.IntegerNode($$[$0]);
 break;
-case 28: this.$ = [[new yy.DataNode($$[$0])], null]; 
+case 28:this.$ = new yy.BooleanNode($$[$0]);
 break;
-case 29: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
+case 29:this.$ = $$[$0];
 break;
-case 30: this.$ = [$$[$0]]; 
+case 30:this.$ = new yy.HashNode($$[$0]);
 break;
-case 31: this.$ = $$[$0]; 
+case 31:this.$ = [$$[$0-2], $$[$0]];
 break;
-case 32: this.$ = new yy.StringNode($$[$0]); 
+case 32:this.$ = new yy.PartialNameNode($$[$0]);
 break;
-case 33: this.$ = new yy.IntegerNode($$[$0]); 
+case 33:this.$ = new yy.PartialNameNode(new yy.StringNode($$[$0]));
 break;
-case 34: this.$ = new yy.BooleanNode($$[$0]); 
+case 34:this.$ = new yy.PartialNameNode(new yy.IntegerNode($$[$0]));
 break;
-case 35: this.$ = new yy.DataNode($$[$0]); 
+case 35:this.$ = new yy.DataNode($$[$0]);
 break;
-case 36: this.$ = new yy.HashNode($$[$0]); 
+case 36:this.$ = new yy.IdNode($$[$0]);
 break;
-case 37: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
+case 37: $$[$0-2].push({part: $$[$0], separator: $$[$0-1]}); this.$ = $$[$0-2]; 
 break;
-case 38: this.$ = [$$[$0]]; 
+case 38:this.$ = [{part: $$[$0]}];
 break;
-case 39: this.$ = [$$[$0-2], $$[$0]]; 
+case 41:this.$ = [];
 break;
-case 40: this.$ = [$$[$0-2], new yy.StringNode($$[$0])]; 
+case 42:$$[$0-1].push($$[$0]);
 break;
-case 41: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])]; 
+case 45:this.$ = [$$[$0]];
 break;
-case 42: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])]; 
-break;
-case 43: this.$ = [$$[$0-2], new yy.DataNode($$[$0])]; 
-break;
-case 44: this.$ = new yy.PartialNameNode($$[$0]); 
-break;
-case 45: this.$ = new yy.IdNode($$[$0]); 
-break;
-case 46: $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
-break;
-case 47: this.$ = [$$[$0]]; 
+case 46:$$[$0-1].push($$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:[2,7],6:3,7:4,8:6,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,5],22:[1,14],23:[1,15],24:[1,16]},{1:[3]},{5:[1,17]},{5:[2,6],7:18,8:6,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,19],20:[2,6],22:[1,14],23:[1,15],24:[1,16]},{5:[2,5],6:20,8:21,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,5],20:[2,5],22:[1,14],23:[1,15],24:[1,16]},{17:23,18:[1,22],21:24,28:[1,25],35:[1,27],38:26},{5:[2,8],14:[2,8],15:[2,8],16:[2,8],19:[2,8],20:[2,8],22:[2,8],23:[2,8],24:[2,8]},{4:28,6:3,7:4,8:6,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,5],20:[2,7],22:[1,14],23:[1,15],24:[1,16]},{4:29,6:3,7:4,8:6,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,5],20:[2,7],22:[1,14],23:[1,15],24:[1,16]},{5:[2,12],14:[2,12],15:[2,12],16:[2,12],19:[2,12],20:[2,12],22:[2,12],23:[2,12],24:[2,12]},{5:[2,13],14:[2,13],15:[2,13],16:[2,13],19:[2,13],20:[2,13],22:[2,13],23:[2,13],24:[2,13]},{5:[2,14],14:[2,14],15:[2,14],16:[2,14],19:[2,14],20:[2,14],22:[2,14],23:[2,14],24:[2,14]},{5:[2,15],14:[2,15],15:[2,15],16:[2,15],19:[2,15],20:[2,15],22:[2,15],23:[2,15],24:[2,15]},{17:30,21:24,28:[1,25],35:[1,27],38:26},{17:31,21:24,28:[1,25],35:[1,27],38:26},{17:32,21:24,28:[1,25],35:[1,27],38:26},{25:33,37:[1,34]},{1:[2,1]},{5:[2,2],8:21,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,19],20:[2,2],22:[1,14],23:[1,15],24:[1,16]},{17:23,21:24,28:[1,25],35:[1,27],38:26},{5:[2,4],7:35,8:6,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,19],20:[2,4],22:[1,14],23:[1,15],24:[1,16]},{5:[2,9],14:[2,9],15:[2,9],16:[2,9],19:[2,9],20:[2,9],22:[2,9],23:[2,9],24:[2,9]},{5:[2,23],14:[2,23],15:[2,23],16:[2,23],19:[2,23],20:[2,23],22:[2,23],23:[2,23],24:[2,23]},{18:[1,36]},{18:[2,27],21:41,26:37,27:38,28:[1,45],29:39,30:[1,42],31:[1,43],32:[1,44],33:40,34:46,35:[1,47],38:26},{18:[2,28]},{18:[2,45],28:[2,45],30:[2,45],31:[2,45],32:[2,45],35:[2,45],39:[1,48]},{18:[2,47],28:[2,47],30:[2,47],31:[2,47],32:[2,47],35:[2,47],39:[2,47]},{10:49,20:[1,50]},{10:51,20:[1,50]},{18:[1,52]},{18:[1,53]},{18:[1,54]},{18:[1,55],21:56,35:[1,27],38:26},{18:[2,44],35:[2,44]},{5:[2,3],8:21,9:7,11:8,12:9,13:10,14:[1,11],15:[1,12],16:[1,13],19:[1,19],20:[2,3],22:[1,14],23:[1,15],24:[1,16]},{14:[2,17],15:[2,17],16:[2,17],19:[2,17],20:[2,17],22:[2,17],23:[2,17],24:[2,17]},{18:[2,25],21:41,27:57,28:[1,45],29:58,30:[1,42],31:[1,43],32:[1,44],33:40,34:46,35:[1,47],38:26},{18:[2,26]},{18:[2,30],28:[2,30],30:[2,30],31:[2,30],32:[2,30],35:[2,30]},{18:[2,36],34:59,35:[1,60]},{18:[2,31],28:[2,31],30:[2,31],31:[2,31],32:[2,31],35:[2,31]},{18:[2,32],28:[2,32],30:[2,32],31:[2,32],32:[2,32],35:[2,32]},{18:[2,33],28:[2,33],30:[2,33],31:[2,33],32:[2,33],35:[2,33]},{18:[2,34],28:[2,34],30:[2,34],31:[2,34],32:[2,34],35:[2,34]},{18:[2,35],28:[2,35],30:[2,35],31:[2,35],32:[2,35],35:[2,35]},{18:[2,38],35:[2,38]},{18:[2,47],28:[2,47],30:[2,47],31:[2,47],32:[2,47],35:[2,47],36:[1,61],39:[2,47]},{35:[1,62]},{5:[2,10],14:[2,10],15:[2,10],16:[2,10],19:[2,10],20:[2,10],22:[2,10],23:[2,10],24:[2,10]},{21:63,35:[1,27],38:26},{5:[2,11],14:[2,11],15:[2,11],16:[2,11],19:[2,11],20:[2,11],22:[2,11],23:[2,11],24:[2,11]},{14:[2,16],15:[2,16],16:[2,16],19:[2,16],20:[2,16],22:[2,16],23:[2,16],24:[2,16]},{5:[2,19],14:[2,19],15:[2,19],16:[2,19],19:[2,19],20:[2,19],22:[2,19],23:[2,19],24:[2,19]},{5:[2,20],14:[2,20],15:[2,20],16:[2,20],19:[2,20],20:[2,20],22:[2,20],23:[2,20],24:[2,20]},{5:[2,21],14:[2,21],15:[2,21],16:[2,21],19:[2,21],20:[2,21],22:[2,21],23:[2,21],24:[2,21]},{18:[1,64]},{18:[2,24]},{18:[2,29],28:[2,29],30:[2,29],31:[2,29],32:[2,29],35:[2,29]},{18:[2,37],35:[2,37]},{36:[1,61]},{21:65,28:[1,69],30:[1,66],31:[1,67],32:[1,68],35:[1,27],38:26},{18:[2,46],28:[2,46],30:[2,46],31:[2,46],32:[2,46],35:[2,46],39:[2,46]},{18:[1,70]},{5:[2,22],14:[2,22],15:[2,22],16:[2,22],19:[2,22],20:[2,22],22:[2,22],23:[2,22],24:[2,22]},{18:[2,39],35:[2,39]},{18:[2,40],35:[2,40]},{18:[2,41],35:[2,41]},{18:[2,42],35:[2,42]},{18:[2,43],35:[2,43]},{5:[2,18],14:[2,18],15:[2,18],16:[2,18],19:[2,18],20:[2,18],22:[2,18],23:[2,18],24:[2,18]}],
-defaultActions: {17:[2,1],25:[2,28],38:[2,26],57:[2,24]},
+table: [{3:1,4:2,8:3,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,10],22:[1,12],23:[1,13],25:[1,14]},{1:[3]},{5:[1,15],8:16,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,10],22:[1,12],23:[1,13],25:[1,14]},{5:[2,8],14:[2,8],15:[2,8],16:[2,8],19:[2,8],20:[2,8],22:[2,8],23:[2,8],25:[2,8]},{4:19,6:17,7:18,8:3,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,20],20:[2,7],22:[1,12],23:[1,13],25:[1,14]},{4:19,6:21,7:18,8:3,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,20],20:[2,7],22:[1,12],23:[1,13],25:[1,14]},{5:[2,12],14:[2,12],15:[2,12],16:[2,12],19:[2,12],20:[2,12],22:[2,12],23:[2,12],25:[2,12]},{5:[2,13],14:[2,13],15:[2,13],16:[2,13],19:[2,13],20:[2,13],22:[2,13],23:[2,13],25:[2,13]},{5:[2,14],14:[2,14],15:[2,14],16:[2,14],19:[2,14],20:[2,14],22:[2,14],23:[2,14],25:[2,14]},{5:[2,15],14:[2,15],15:[2,15],16:[2,15],19:[2,15],20:[2,15],22:[2,15],23:[2,15],25:[2,15]},{17:22,21:23,30:24,38:[1,27],40:[1,26],41:25},{17:28,21:23,30:24,38:[1,27],40:[1,26],41:25},{17:29,21:23,30:24,38:[1,27],40:[1,26],41:25},{17:30,21:23,30:24,38:[1,27],40:[1,26],41:25},{21:32,26:31,32:[1,33],33:[1,34],38:[1,27],41:25},{1:[2,1]},{5:[2,9],14:[2,9],15:[2,9],16:[2,9],19:[2,9],20:[2,9],22:[2,9],23:[2,9],25:[2,9]},{10:35,20:[1,36]},{4:37,8:3,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,10],20:[2,6],22:[1,12],23:[1,13],25:[1,14]},{7:38,8:16,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,20],20:[2,5],22:[1,12],23:[1,13],25:[1,14]},{17:22,18:[1,39],21:23,30:24,38:[1,27],40:[1,26],41:25},{10:40,20:[1,36]},{18:[1,41]},{18:[2,41],24:[2,41],28:42,32:[2,41],33:[2,41],34:[2,41],38:[2,41],40:[2,41]},{18:[2,24],24:[2,24]},{18:[2,36],24:[2,36],32:[2,36],33:[2,36],34:[2,36],38:[2,36],40:[2,36],42:[1,43]},{21:44,38:[1,27],41:25},{18:[2,38],24:[2,38],32:[2,38],33:[2,38],34:[2,38],38:[2,38],40:[2,38],42:[2,38]},{18:[1,45]},{18:[1,46]},{24:[1,47]},{18:[2,39],21:49,27:48,38:[1,27],41:25},{18:[2,32],38:[2,32]},{18:[2,33],38:[2,33]},{18:[2,34],38:[2,34]},{5:[2,10],14:[2,10],15:[2,10],16:[2,10],19:[2,10],20:[2,10],22:[2,10],23:[2,10],25:[2,10]},{21:50,38:[1,27],41:25},{8:16,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,10],20:[2,2],22:[1,12],23:[1,13],25:[1,14]},{4:51,8:3,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,10],20:[2,4],22:[1,12],23:[1,13],25:[1,14]},{14:[2,22],15:[2,22],16:[2,22],19:[2,22],20:[2,22],22:[2,22],23:[2,22],25:[2,22]},{5:[2,11],14:[2,11],15:[2,11],16:[2,11],19:[2,11],20:[2,11],22:[2,11],23:[2,11],25:[2,11]},{14:[2,17],15:[2,17],16:[2,17],19:[2,17],20:[2,17],22:[2,17],23:[2,17],25:[2,17]},{18:[2,43],21:55,24:[2,43],29:52,30:59,31:53,32:[1,56],33:[1,57],34:[1,58],35:54,36:60,37:61,38:[1,62],40:[1,26],41:25},{38:[1,63]},{18:[2,35],24:[2,35],32:[2,35],33:[2,35],34:[2,35],38:[2,35],40:[2,35]},{14:[2,16],15:[2,16],16:[2,16],19:[2,16],20:[2,16],22:[2,16],23:[2,16],25:[2,16]},{5:[2,19],14:[2,19],15:[2,19],16:[2,19],19:[2,19],20:[2,19],22:[2,19],23:[2,19],25:[2,19]},{5:[2,20],14:[2,20],15:[2,20],16:[2,20],19:[2,20],20:[2,20],22:[2,20],23:[2,20],25:[2,20]},{18:[1,64]},{18:[2,40]},{18:[1,65]},{8:16,9:4,11:5,12:6,13:7,14:[1,8],15:[1,9],16:[1,11],19:[1,10],20:[2,3],22:[1,12],23:[1,13],25:[1,14]},{18:[2,23],24:[2,23]},{18:[2,42],24:[2,42],32:[2,42],33:[2,42],34:[2,42],38:[2,42],40:[2,42]},{18:[2,44],24:[2,44]},{18:[2,25],24:[2,25],32:[2,25],33:[2,25],34:[2,25],38:[2,25],40:[2,25]},{18:[2,26],24:[2,26],32:[2,26],33:[2,26],34:[2,26],38:[2,26],40:[2,26]},{18:[2,27],24:[2,27],32:[2,27],33:[2,27],34:[2,27],38:[2,27],40:[2,27]},{18:[2,28],24:[2,28],32:[2,28],33:[2,28],34:[2,28],38:[2,28],40:[2,28]},{18:[2,29],24:[2,29],32:[2,29],33:[2,29],34:[2,29],38:[2,29],40:[2,29]},{18:[2,30],24:[2,30],37:66,38:[1,67]},{18:[2,45],24:[2,45],38:[2,45]},{18:[2,38],24:[2,38],32:[2,38],33:[2,38],34:[2,38],38:[2,38],39:[1,68],40:[2,38],42:[2,38]},{18:[2,37],24:[2,37],32:[2,37],33:[2,37],34:[2,37],38:[2,37],40:[2,37],42:[2,37]},{5:[2,21],14:[2,21],15:[2,21],16:[2,21],19:[2,21],20:[2,21],22:[2,21],23:[2,21],25:[2,21]},{5:[2,18],14:[2,18],15:[2,18],16:[2,18],19:[2,18],20:[2,18],22:[2,18],23:[2,18],25:[2,18]},{18:[2,46],24:[2,46],38:[2,46]},{39:[1,68]},{21:55,30:59,31:69,32:[1,56],33:[1,57],34:[1,58],38:[1,27],40:[1,26],41:25},{18:[2,31],24:[2,31],38:[2,31]}],
+defaultActions: {15:[2,1],49:[2,40]},
 parseError: function parseError(str, hash) {
     throw new Error(str);
 },
@@ -564,88 +564,90 @@ pushState:function begin(condition) {
 lexer.options = {};
 lexer.performAction = function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 
+
+function strip(start, end) {
+  return yy_.yytext = yy_.yytext.substr(start, yy_.yyleng-end);
+}
+
+
 var YYSTATE=YY_START
 switch($avoiding_name_collisions) {
-case 0: yy_.yytext = "\\"; return 14; 
+case 0:yy_.yytext = "\\"; return 14;
 break;
 case 1:
                                    if(yy_.yytext.slice(-1) !== "\\") this.begin("mu");
-                                   if(yy_.yytext.slice(-1) === "\\") yy_.yytext = yy_.yytext.substr(0,yy_.yyleng-1), this.begin("emu");
+                                   if(yy_.yytext.slice(-1) === "\\") strip(0,1), this.begin("emu");
                                    if(yy_.yytext) return 14;
                                  
 break;
-case 2: return 14; 
+case 2:return 14;
 break;
 case 3:
                                    if(yy_.yytext.slice(-1) !== "\\") this.popState();
-                                   if(yy_.yytext.slice(-1) === "\\") yy_.yytext = yy_.yytext.substr(0,yy_.yyleng-1);
+                                   if(yy_.yytext.slice(-1) === "\\") strip(0,1);
                                    return 14;
                                  
 break;
-case 4: yy_.yytext = yy_.yytext.substr(0, yy_.yyleng-4); this.popState(); return 15; 
+case 4:strip(0,4); this.popState(); return 15;
 break;
-case 5: this.begin("par"); return 24; 
+case 5:return 25;
 break;
-case 6: return 16; 
+case 6:return 16;
 break;
-case 7: return 20; 
+case 7:return 20;
 break;
-case 8: return 19; 
+case 8:return 19;
 break;
-case 9: return 19; 
+case 9:return 19;
 break;
-case 10: return 23; 
+case 10:return 23;
 break;
-case 11: return 23; 
+case 11:return 22;
 break;
-case 12: this.popState(); this.begin('com'); 
+case 12:this.popState(); this.begin('com');
 break;
-case 13: yy_.yytext = yy_.yytext.substr(3,yy_.yyleng-5); this.popState(); return 15; 
+case 13:strip(3,5); this.popState(); return 15;
 break;
-case 14: return 22; 
+case 14:return 22;
 break;
-case 15: return 36; 
+case 15:return 39;
 break;
-case 16: return 35; 
+case 16:return 38;
 break;
-case 17: return 35; 
+case 17:return 38;
 break;
-case 18: return 39; 
+case 18:return 42;
 break;
-case 19: /*ignore whitespace*/ 
+case 19:/*ignore whitespace*/
 break;
-case 20: this.popState(); return 18; 
+case 20:this.popState(); return 24;
 break;
-case 21: this.popState(); return 18; 
+case 21:this.popState(); return 18;
 break;
-case 22: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\"/g,'"'); return 30; 
+case 22:yy_.yytext = strip(1,2).replace(/\\"/g,'"'); return 32;
 break;
-case 23: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\'/g,"'"); return 30; 
+case 23:yy_.yytext = strip(1,2).replace(/\\'/g,"'"); return 32;
 break;
-case 24: yy_.yytext = yy_.yytext.substr(1); return 28; 
+case 24:return 40;
 break;
-case 25: return 32; 
+case 25:return 34;
 break;
-case 26: return 32; 
+case 26:return 34;
 break;
-case 27: return 31; 
+case 27:return 33;
 break;
-case 28: return 35; 
+case 28:return 38;
 break;
-case 29: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2); return 35; 
+case 29:yy_.yytext = strip(1,2); return 38;
 break;
-case 30: return 'INVALID'; 
+case 30:return 'INVALID';
 break;
-case 31: /*ignore whitespace*/ 
-break;
-case 32: this.popState(); return 37; 
-break;
-case 33: return 5; 
+case 31:return 5;
 break;
 }
 };
-lexer.rules = [/^(?:\\\\(?=(\{\{)))/,/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|$)))/,/^(?:[\s\S]*?--\}\})/,/^(?:\{\{>)/,/^(?:\{\{#)/,/^(?:\{\{\/)/,/^(?:\{\{\^)/,/^(?:\{\{\s*else\b)/,/^(?:\{\{\{)/,/^(?:\{\{&)/,/^(?:\{\{!--)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{)/,/^(?:=)/,/^(?:\.(?=[}/ ]))/,/^(?:\.\.)/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}\}\})/,/^(?:\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@[a-zA-Z]+)/,/^(?:true(?=[}\s]))/,/^(?:false(?=[}\s]))/,/^(?:-?[0-9]+(?=[}\s]))/,/^(?:[a-zA-Z0-9_$:\-]+(?=[=}\s\/.]))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:\s+)/,/^(?:[a-zA-Z0-9_$\-\/]+)/,/^(?:$)/];
-lexer.conditions = {"mu":{"rules":[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,33],"inclusive":false},"emu":{"rules":[3],"inclusive":false},"com":{"rules":[4],"inclusive":false},"par":{"rules":[31,32],"inclusive":false},"INITIAL":{"rules":[0,1,2,33],"inclusive":true}};
+lexer.rules = [/^(?:\\\\(?=(\{\{)))/,/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|$)))/,/^(?:[\s\S]*?--\}\})/,/^(?:\{\{>)/,/^(?:\{\{#)/,/^(?:\{\{\/)/,/^(?:\{\{\^)/,/^(?:\{\{\s*else\b)/,/^(?:\{\{\{)/,/^(?:\{\{&)/,/^(?:\{\{!--)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{)/,/^(?:=)/,/^(?:\.(?=[}\/ ]))/,/^(?:\.\.)/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}\}\})/,/^(?:\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@)/,/^(?:true(?=[}\s]))/,/^(?:false(?=[}\s]))/,/^(?:-?[0-9]+(?=[}\s]))/,/^(?:([^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=[=}\s\/.])))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:$)/];
+lexer.conditions = {"mu":{"rules":[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],"inclusive":false},"emu":{"rules":[3],"inclusive":false},"com":{"rules":[4],"inclusive":false},"INITIAL":{"rules":[0,1,2,31],"inclusive":true}};
 return lexer;})()
 parser.lexer = lexer;
 function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
@@ -702,13 +704,10 @@ Handlebars.AST.PartialNode = function(partialName, context) {
 };
 
 Handlebars.AST.BlockNode = function(mustache, program, inverse, close) {
-  var verifyMatch = function(open, close) {
-    if(open.original !== close.original) {
-      throw new Handlebars.Exception(open.original + " doesn't match " + close.original);
-    }
-  };
+  if(mustache.id.original !== close.original) {
+    throw new Handlebars.Exception(mustache.id.original + " doesn't match " + close.original);
+  }
 
-  verifyMatch(mustache.id, close);
   this.type = "block";
   this.mustache = mustache;
   this.program  = program;
@@ -731,21 +730,24 @@ Handlebars.AST.HashNode = function(pairs) {
 
 Handlebars.AST.IdNode = function(parts) {
   this.type = "ID";
-  this.original = parts.join(".");
 
-  var dig = [], depth = 0;
+  var original = "",
+      dig = [],
+      depth = 0;
 
   for(var i=0,l=parts.length; i<l; i++) {
-    var part = parts[i];
+    var part = parts[i].part;
+    original += (parts[i].separator || '') + part;
 
     if (part === ".." || part === "." || part === "this") {
-      if (dig.length > 0) { throw new Handlebars.Exception("Invalid path: " + this.original); }
+      if (dig.length > 0) { throw new Handlebars.Exception("Invalid path: " + original); }
       else if (part === "..") { depth++; }
       else { this.isScoped = true; }
     }
     else { dig.push(part); }
   }
 
+  this.original = original;
   this.parts    = dig;
   this.string   = dig.join('.');
   this.depth    = depth;
@@ -759,7 +761,7 @@ Handlebars.AST.IdNode = function(parts) {
 
 Handlebars.AST.PartialNameNode = function(name) {
   this.type = "PARTIAL_NAME";
-  this.name = name;
+  this.name = name.original;
 };
 
 Handlebars.AST.DataNode = function(id) {
@@ -769,13 +771,15 @@ Handlebars.AST.DataNode = function(id) {
 
 Handlebars.AST.StringNode = function(string) {
   this.type = "STRING";
-  this.string = string;
-  this.stringModeValue = string;
+  this.original =
+    this.string =
+    this.stringModeValue = string;
 };
 
 Handlebars.AST.IntegerNode = function(integer) {
   this.type = "INTEGER";
-  this.integer = integer;
+  this.original =
+    this.integer = integer;
   this.stringModeValue = Number(integer);
 };
 
@@ -809,7 +813,7 @@ Handlebars.SafeString = function(string) {
   this.string = string;
 };
 Handlebars.SafeString.prototype.toString = function() {
-  return this.string.toString();
+  return "" + this.string;
 };
 
 var escape = {
@@ -848,7 +852,7 @@ Handlebars.Utils = {
     // Force a string conversion as this will be done by the append regardless and
     // the regex test will do this transparently behind the scenes, causing issues if
     // an object's to string has escaped characters in it.
-    string = string.toString();
+    string = "" + string;
 
     if(!possible.test(string)) { return string; }
     return string.replace(badChars, escapeChar);
@@ -869,7 +873,6 @@ Handlebars.Utils = {
 
 /*jshint eqnull:true*/
 var Compiler = Handlebars.Compiler = function() {};
-var JavaScriptCompiler = Handlebars.JavaScriptCompiler = function() {};
 
 // the foundHelper register will disambiguate helper lookup from finding a
 // function in a context. This is necessary for mustache compatibility, which
@@ -1162,7 +1165,15 @@ Compiler.prototype = {
 
   DATA: function(data) {
     this.options.data = true;
-    this.opcode('lookupData', data.id);
+    if (data.id.isScoped || data.id.depth) {
+      throw new Handlebars.Exception('Scoped data references are not supported: ' + data.original);
+    }
+
+    this.opcode('lookupData');
+    var parts = data.id.parts;
+    for(var i=0, l=parts.length; i<l; i++) {
+      this.opcode('lookup', parts[i]);
+    }
   },
 
   STRING: function(string) {
@@ -1269,9 +1280,56 @@ Compiler.prototype = {
   }
 };
 
+Handlebars.precompile = function(input, options) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
+    throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.precompile. You passed " + input);
+  }
+
+  options = options || {};
+  if (!('data' in options)) {
+    options.data = true;
+  }
+  var ast = Handlebars.parse(input);
+  var environment = new Compiler().compile(ast, options);
+  return new Handlebars.JavaScriptCompiler().compile(environment, options);
+};
+
+Handlebars.compile = function(input, options) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
+    throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.compile. You passed " + input);
+  }
+
+  options = options || {};
+  if (!('data' in options)) {
+    options.data = true;
+  }
+  var compiled;
+  function compile() {
+    var ast = Handlebars.parse(input);
+    var environment = new Compiler().compile(ast, options);
+    var templateSpec = new Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
+    return Handlebars.template(templateSpec);
+  }
+
+  // Template is only compiled on first use and cached after that point.
+  return function(context, options) {
+    if (!compiled) {
+      compiled = compile();
+    }
+    return compiled.call(this, context, options);
+  };
+};
+
+;
+// lib/handlebars/compiler/javascript-compiler.js
+/*jshint eqnull:true*/
+
 var Literal = function(value) {
   this.value = value;
 };
+
+
+var JavaScriptCompiler = Handlebars.JavaScriptCompiler = function() {};
 
 JavaScriptCompiler.prototype = {
   // PUBLIC API: You can override these methods in a subclass to provide
@@ -1334,7 +1392,7 @@ JavaScriptCompiler.prototype = {
 
     this.i = 0;
 
-    for(l=opcodes.length; this.i<l; this.i++) {
+    for(var l=opcodes.length; this.i<l; this.i++) {
       opcode = opcodes[this.i];
 
       if(opcode.opcode === 'DECLARE') {
@@ -1361,8 +1419,9 @@ JavaScriptCompiler.prototype = {
 
     if (!this.isChild) {
       var namespace = this.namespace;
-      var copies = "helpers = helpers || " + namespace + ".helpers;";
-      if (this.environment.usePartial) { copies = copies + " partials = partials || " + namespace + ".partials;"; }
+
+      var copies = "helpers = this.merge(helpers, " + namespace + ".helpers);";
+      if (this.environment.usePartial) { copies = copies + " partials = this.merge(partials, " + namespace + ".partials);"; }
       if (this.options.data) { copies = copies + " data = data || {};"; }
       out.push(copies);
     } else {
@@ -1391,7 +1450,9 @@ JavaScriptCompiler.prototype = {
     // Generate minimizer alias mappings
     if (!this.isChild) {
       for (var alias in this.context.aliases) {
-        this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
+        if (this.context.aliases.hasOwnProperty(alias)) {
+          this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
+        }
       }
     }
 
@@ -1606,11 +1667,11 @@ JavaScriptCompiler.prototype = {
   // [lookupData]
   //
   // On stack, before: ...
-  // On stack, after: data[id], ...
+  // On stack, after: data, ...
   //
-  // Push the result of looking up `id` on the current data
-  lookupData: function(id) {
-    this.push(this.nameLookup('data', id, 'data'));
+  // Push the data lookup operator
+  lookupData: function() {
+    this.push('data');
   },
 
   // [pushStringParam]
@@ -1717,8 +1778,9 @@ JavaScriptCompiler.prototype = {
     this.context.aliases.helperMissing = 'helpers.helperMissing';
 
     var helper = this.lastHelper = this.setupHelper(paramSize, name, true);
+    var nonHelper = this.nameLookup('depth' + this.lastContext, name, 'context');
 
-    this.push(helper.name);
+    this.push(helper.name + ' || ' + nonHelper);
     this.replaceStack(function(name) {
       return name + ' ? ' + name + '.call(' +
           helper.callParams + ") " + ": helperMissing.call(" +
@@ -2103,47 +2165,6 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
   }
   return false;
 };
-
-Handlebars.precompile = function(input, options) {
-  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
-    throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.precompile. You passed " + input);
-  }
-
-  options = options || {};
-  if (!('data' in options)) {
-    options.data = true;
-  }
-  var ast = Handlebars.parse(input);
-  var environment = new Compiler().compile(ast, options);
-  return new JavaScriptCompiler().compile(environment, options);
-};
-
-Handlebars.compile = function(input, options) {
-  if (input == null || (typeof input !== 'string' && input.constructor !== Handlebars.AST.ProgramNode)) {
-    throw new Handlebars.Exception("You must pass a string or Handlebars AST to Handlebars.compile. You passed " + input);
-  }
-
-  options = options || {};
-  if (!('data' in options)) {
-    options.data = true;
-  }
-  var compiled;
-  function compile() {
-    var ast = Handlebars.parse(input);
-    var environment = new Compiler().compile(ast, options);
-    var templateSpec = new JavaScriptCompiler().compile(environment, options, undefined, true);
-    return Handlebars.template(templateSpec);
-  }
-
-  // Template is only compiled on first use and cached after that point.
-  return function(context, options) {
-    if (!compiled) {
-      compiled = compile();
-    }
-    return compiled.call(this, context, options);
-  };
-};
-
 ;
 // lib/handlebars/runtime.js
 
@@ -2162,6 +2183,16 @@ Handlebars.VM = {
           programWrapper = this.programs[i] = Handlebars.VM.program(i, fn);
         }
         return programWrapper;
+      },
+      merge: function(param, common) {
+        var ret = param || common;
+
+        if (param && common) {
+          ret = {};
+          Handlebars.Utils.extend(ret, common);
+          Handlebars.Utils.extend(ret, param);
+        }
+        return ret;
       },
       programWithDepth: Handlebars.VM.programWithDepth,
       noop: Handlebars.VM.noop,
@@ -2235,5 +2266,17 @@ Handlebars.VM = {
 Handlebars.template = Handlebars.VM.template;
 ;
 // lib/handlebars/browser-suffix.js
-})(Handlebars);
+  if (typeof module === 'object' && module.exports) {
+    // CommonJS
+    module.exports = Handlebars;
+
+  } else if (typeof define === "function" && define.amd) {
+    // AMD modules
+    define(function() { return Handlebars; });
+
+  } else {
+    // other, i.e. browser
+    this.Handlebars = Handlebars;
+  }
+}).call(this);
 ;
