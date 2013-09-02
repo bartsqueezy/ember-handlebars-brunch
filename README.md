@@ -6,7 +6,7 @@ It is included by default in the [Ember Brunch](https://github.com/icholy/ember-
 
 ## Installation and Usage
 
-Add `"ember-handlebars-brunch": "1.0.4"` to `package.json` within your Brunch application codebase.
+Add `"ember-handlebars-brunch": "1.0.0-rc.8"` to `package.json` within your Brunch application codebase.
 
 Within the templates compiler config object of the `config.coffee` file, set `precompile: true` to enable pre-compiling.
 
