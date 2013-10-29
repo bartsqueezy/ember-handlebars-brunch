@@ -16,6 +16,8 @@ module.exports = class EmberHandlebarsCompiler
       @root = sysPath.join 'app', @config.files.templates.root, sysPath.sep
     if @config.modules.wrapper is off
       @modulesPrefix = ''
+    if @config.files.templates.defaultExtension?
+      @extension = @config.files.templates.defaultExtension
     null
 
   compile: (data, path, callback) ->
