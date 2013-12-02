@@ -1,5 +1,5 @@
 sysPath     = require 'path'
-compileHBS  = require './ember-handlebars-compiler'
+compileHBS  = require 'ember-template-compiler'
 
 module.exports = class EmberHandlebarsCompiler
   brunchPlugin: yes
@@ -25,7 +25,7 @@ module.exports = class EmberHandlebarsCompiler
       tmplPath = tmplPath.substr 0, tmplPath.length - sysPath.extname(tmplPath).length
       tmplName = "Ember.TEMPLATES['#{tmplPath}']"
       if @precompile is on
-        content = compileHBS data.toString()
+        content = compileHBS.precompile(data.toString()).toString()
         result = "#{@modulesPrefix}#{tmplName} = Ember.Handlebars.template(#{content});"
       else
         content = JSON.stringify data.toString()
