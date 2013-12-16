@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/gcollazo/ember-handlebars-brunch.png?branch=master)](https://travis-ci.org/gcollazo/ember-handlebars-brunch)
+
 ## Ember Handlebars for Brunch
 
 This [Brunch](http://brunch.io/) plugin adds support for pre-compiling [Ember Handlebars](http://emberjs.com/) templates prior to runtime, utilizing the latest and greatest EmberJS build (1.0.0).
