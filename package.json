@@ -1,6 +1,6 @@
 {
   "name": "ember-handlebars-brunch",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Adds pre-compiling support for Ember Handlebars templates to Brunch",
   "author": {
     "name": "Steve Bartnesky"
@@ -42,7 +42,8 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "coffee-script": "1.6.2"
+    "coffee-script": "1.6.2",
+    "handlebars": "~1.0.0"
   },
   "devDependencies": {
     "mocha": "1.9.0",

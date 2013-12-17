@@ -1,8 +1,6 @@
 (function() {
-var Ember = { assert: function() {} };
-// Version: v1.0.0-17-g4cff2a4
-// Last commit: 4cff2a4 (2013-09-02 15:39:12 -0400)
-
+var Ember = { assert: function() {}, FEATURES: { isEnabled: function() {} } };
+ // Version: 1.1.0
 
 (function() {
 /**
@@ -40,20 +38,6 @@ Ember.assert("Ember Handlebars requires Handlebars version 1.0.0, COMPILER_REVIS
   @namespace Ember
 */
 Ember.Handlebars = objectCreate(Handlebars);
-
-function makeBindings(options) {
-  var hash = options.hash,
-      hashType = options.hashTypes;
-
-  for (var prop in hash) {
-    if (hashType[prop] === 'ID') {
-      hash[prop + 'Binding'] = hash[prop];
-      hashType[prop + 'Binding'] = 'STRING';
-      delete hash[prop];
-      delete hashType[prop];
-    }
-  }
-}
 
 /**
   Register a bound helper or custom view helper.
@@ -114,7 +98,6 @@ Ember.Handlebars.helper = function(name, value) {
   if (Ember.View.detect(value)) {
     Ember.Handlebars.registerHelper(name, function(options) {
       Ember.assert("You can only pass attributes (such as name=value) not bare values to a helper for a View", arguments.length < 2);
-      makeBindings(options);
       return Ember.Handlebars.helpers.view.call(this, value, options);
     });
   } else {
