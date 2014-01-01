@@ -12,6 +12,8 @@ Add `"ember-handlebars-brunch": "1.0.0"` to `package.json` within your Brunch ap
 
 Within the templates compiler config object of the `config.coffee` file, set `precompile: true` to enable pre-compiling.
 
+*Note:* Be sure to remove the [handlebars-brunch](https://github.com/brunch/handlebars-brunch) plugin if it is installed in your current project.
+
 ```coffeescript
 templates:
     precompile: true  # default is false
