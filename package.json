@@ -26,6 +26,10 @@
     {
       "name": "Codey Whitt",
       "email": "codey.whitt@gmail.com"
+    },
+    {
+      "name": "Giovanni Collazo",
+      "email": "hello@gcollazo.com"
     }
   ],
   "homepage": "https://github.com/bartsqueezy/ember-handlebars-brunch",
