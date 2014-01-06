@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gcollazo/ember-handlebars-brunch.png?branch=master)](https://travis-ci.org/gcollazo/ember-handlebars-brunch)
+[![Build Status](https://travis-ci.org/bartsqueezy/ember-handlebars-brunch.png?branch=master)](https://travis-ci.org/bartsqueezy/ember-handlebars-brunch)
 
 ## Ember Handlebars for Brunch
 

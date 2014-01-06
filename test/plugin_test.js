@@ -4,7 +4,16 @@ describe('Plugin', function() {
   var plugin;
 
   beforeEach(function() {
-    plugin = new Plugin({});
+    plugin = new Plugin({
+      files: {
+        templates: {
+          precompile: true
+        }
+      },
+      modules: {
+        wrapper: false
+      }
+    });
   });
 
   it('should be an object', function() {
@@ -16,12 +25,12 @@ describe('Plugin', function() {
   });
 
   it('should compile and produce valid result', function(done) {
-    var content = '<strong>{{weak}}</strong>';
-    var expected = '<strong>wat</strong>';
+    var content = '<strong>{{outlet}}</strong>';
 
-    plugin.compile(content, 'template.handlebars', function(error, data) {
+    plugin.compile(content, 'foo.handlebars', function(error, data) {
       expect(error).not.to.be.ok();
-      expect(eval(data)({weak: 'wat'})).to.equal(expected);
+      expect(data).to.contain('outlet');
+      expect(data).to.contain("Ember.TEMPLATES['foo']");
       done();
     });
   });
