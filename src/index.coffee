@@ -24,12 +24,14 @@ module.exports = class EmberHandlebarsCompiler
         "#{@modulesPrefix}#{data}#{@modulesSuffix}"
     if @config.modules.wrapper is off
       @modulesPrefix = ''
+    if @config.files.templates.defaultExtension?
+      @extension = @config.files.templates.defaultExtension
     null
 
   compile: (data, path, callback) ->
     try
       tmplPath = path.replace @root, ''
-      tmplPath = tmplPath.replace /\\/g, '/'
+      tmplPath = tmplPath.replace '/\\/g', '/'
       tmplPath = tmplPath.substr 0, tmplPath.length - sysPath.extname(tmplPath).length
       if @precompile is on
         content = compileHBS.precompile(data.toString()).toString()

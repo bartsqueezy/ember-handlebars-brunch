@@ -5,7 +5,16 @@ describe('Plugin', function() {
   var plugin;
 
   beforeEach(function() {
-    plugin = new Plugin({files:{templates:{precompile:true}}, modules:{wrapper:false}});
+    plugin = new Plugin({
+      files: {
+        templates: {
+          precompile: true
+        }
+      },
+      modules: {
+        wrapper: false
+      }
+    });
   });
 
 it('should be an object', function() {

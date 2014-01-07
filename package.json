@@ -1,6 +1,6 @@
 {
   "name": "ember-handlebars-brunch",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Adds pre-compiling support for Ember Handlebars templates to Brunch",
   "author": {
     "name": "Steve Bartnesky"
@@ -26,6 +26,10 @@
     {
       "name": "Codey Whitt",
       "email": "codey.whitt@gmail.com"
+    },
+    {
+      "name": "Giovanni Collazo",
+      "email": "hello@gcollazo.com"
     }
   ],
   "homepage": "https://github.com/bartsqueezy/ember-handlebars-brunch",
