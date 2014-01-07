@@ -1,4 +1,5 @@
-var Handlebars = require('handlebars');
+var fs = require('fs'),
+    path = require('path');
 
 describe('Plugin', function() {
   var plugin;
@@ -16,7 +17,7 @@ describe('Plugin', function() {
     });
   });
 
-  it('should be an object', function() {
+it('should be an object', function() {
     expect(plugin).to.be.ok();
   });
 
