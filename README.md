@@ -2,11 +2,11 @@
 
 ## Ember Handlebars for Brunch
 
-This [Brunch](http://brunch.io/) plugin adds support for pre-compiling [Ember Handlebars](http://emberjs.com/) templates prior to runtime, utilizing the latest and greatest EmberJS build (1.2.0).
+This [Brunch](http://brunch.io/) plugin adds support for pre-compiling [Ember Handlebars](http://emberjs.com/) templates prior to runtime, utilizing the latest and greatest EmberJS build (1.3.0).
 
 ## Installation and Usage
 
-Add `"ember-handlebars-brunch": "1.2.0"` to `package.json` within your Brunch application codebase.
+Add `"ember-handlebars-brunch": "1.3.0"` to `package.json` within your Brunch application codebase.
 
 Within the templates compiler config object of the `config.coffee` file, set `precompile: true` to enable pre-compiling.
 
