@@ -13,7 +13,10 @@ module.exports = class EmberHandlebarsCompiler
     if @config.files.templates.precompile is on
       @precompile = on
     if @config.files.templates.root?
-      @root = sysPath.join 'app', @config.files.templates.root, sysPath.sep
+      if typeof @config.files.templates.root == 'string'
+        @root = sysPath.join 'app', @config.files.templates.root, sysPath.sep
+      else
+        @root = @config.files.templates.root
     if @config.modules.wrapper is off
       @modulesPrefix = ''
     if @config.files.templates.defaultExtension?
@@ -22,8 +25,8 @@ module.exports = class EmberHandlebarsCompiler
 
   compile: (data, path, callback) ->
     try
-      tmplPath = path.replace @root, ''
-      tmplPath = tmplPath.replace '/\\/g', '/'
+      tmplPath = path.replace /\\/g, '/'
+      tmplPath = tmplPath.replace @root, ''
       tmplPath = tmplPath.substr 0, tmplPath.length - sysPath.extname(tmplPath).length
       tmplName = "Ember.TEMPLATES['#{tmplPath}']"
       if @precompile is on
