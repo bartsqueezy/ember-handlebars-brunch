@@ -6,8 +6,8 @@ module.exports = (->
   vm      = require 'vm'
   sysPath = require 'path'
 
-  compilerPath = sysPath.join __dirname, '..', 'node_modules/ember-template-compiler/vendor/', 'ember-template-compiler.js'
-  handlebarsPath = sysPath.join __dirname, '..', 'node_modules/handlebars/dist', 'handlebars.js'
+  compilerPath = require.resolve 'ember-template-compiler/vendor/ember-template-compiler.js'
+  handlebarsPath = require.resolve 'handlebars/dist/handlebars.js'
 
   compilerjs   = fs.readFileSync compilerPath, 'utf8'
   handlebarsjs   = fs.readFileSync handlebarsPath, 'utf8'
